@@ -3,13 +3,13 @@
 Skeme is a library for tagging objects (server instances, storage volumes, etc).  It is intended to allow tagging of the same resource in multiple systems simultaneously.
 
 Currenly Skeme supports the following cloud providers and management tools.  Also listed are which resources can be tagged for each provider or manager
-+Cloud Providers+
+*Cloud Providers*
 * Amazon EC2
   * Amazon EC2 Server Instance
   * Amazon EC2 EBS Volume
   * Amazon EC2 EBS Snapshot
 
-+Cloud Management Tools+
+*Cloud Management Tools*
 * RightScale
   * Amazon EC2 Server Instance
   * Amazon EC2 EBS Volume
