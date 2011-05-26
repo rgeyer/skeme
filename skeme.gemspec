@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{skeme}
-  s.version = "0.0.1"
+  s.version = "0.0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan J. Geyer"]
@@ -15,13 +15,14 @@ Gem::Specification.new do |s|
 Skeme is a library for tagging objects (server instances, storage volumes, etc).  It is intended to allow tagging of the same resource in multiple systems simultaneously.
 
 Currenly Skeme supports the following cloud providers and management tools.  Also listed are which resources can be tagged for each provider or manager
-+Cloud Providers+
+
+__Cloud Providers__
 * Amazon EC2
   * Amazon EC2 Server Instance
   * Amazon EC2 EBS Volume
   * Amazon EC2 EBS Snapshot
 
-+Cloud Management Tools+
+__Cloud Management Tools__
 * RightScale
   * Amazon EC2 Server Instance
   * Amazon EC2 EBS Volume
@@ -67,14 +68,14 @@ further details.
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<right_aws>, [">= 2.1.0"])
+      s.add_runtime_dependency(%q<right_aws>, [">= 2.0.0"])
       s.add_runtime_dependency(%q<rest_connection>, [">= 0.0.21"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
     else
-      s.add_dependency(%q<right_aws>, [">= 2.1.0"])
+      s.add_dependency(%q<right_aws>, [">= 2.0.0"])
       s.add_dependency(%q<rest_connection>, [">= 0.0.21"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
@@ -82,7 +83,7 @@ further details.
       s.add_dependency(%q<rcov>, [">= 0"])
     end
   else
-    s.add_dependency(%q<right_aws>, [">= 2.1.0"])
+    s.add_dependency(%q<right_aws>, [">= 2.0.0"])
     s.add_dependency(%q<rest_connection>, [">= 0.0.21"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
