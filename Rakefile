@@ -14,11 +14,11 @@ Jeweler::Tasks.new do |gem|
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "skeme"
   gem.homepage = "http://github.com/rgeyer/skeme"
-  gem.license = "MIT"
+  gem.license = "Apache2"
   gem.summary = %Q{A cloud management tagging library}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.description = IO.read(File.join(File.dirname(__FILE__), "README.rdoc"))
   gem.email = "me@ryangeyer.com"
-  gem.authors = ["Ryan Geyer"]
+  gem.authors = ["Ryan J. Geyer"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'
