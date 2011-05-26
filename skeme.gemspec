@@ -5,12 +5,34 @@
 
 Gem::Specification.new do |s|
   s.name = %q{skeme}
-  s.version = ""
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Ryan Geyer"]
+  s.authors = ["Ryan J. Geyer"]
   s.date = %q{2011-05-26}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{= skeme
+
+Skeme is a library for tagging objects (server instances, storage volumes, etc).  It is intended to allow tagging of the same resource in multiple systems simultaneously.
+
+Currenly Skeme supports the following cloud providers and management tools.  Also listed are which resources can be tagged for each provider or manager
++Cloud Providers+
+* Amazon EC2
+  * Amazon EC2 Server Instance
+  * Amazon EC2 EBS Volume
+  * Amazon EC2 EBS Snapshot
+
++Cloud Management Tools+
+* RightScale
+  * Amazon EC2 Server Instance
+  * Amazon EC2 EBS Volume
+  * Amazon EC2 EBS Snapshot
+
+== Copyright
+
+Copyright (c) 2011 Ryan Geyer. See LICENSE.txt for
+further details.
+
+}
   s.email = %q{me@ryangeyer.com}
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -23,14 +45,16 @@ Gem::Specification.new do |s|
     "NOTICE",
     "README.rdoc",
     "Rakefile",
+    "VERSION",
     "lib/cloud_providers/aws.rb",
     "lib/managers/rightscale.rb",
     "lib/skeme.rb",
+    "skeme.gemspec",
     "test/helper.rb",
     "test/test_skeme.rb"
   ]
   s.homepage = %q{http://github.com/rgeyer/skeme}
-  s.licenses = ["MIT"]
+  s.licenses = ["Apache2"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.5.2}
   s.summary = %q{A cloud management tagging library}
