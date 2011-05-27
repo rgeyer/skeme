@@ -19,6 +19,7 @@ module Skeme
       @@logger = nil
       @@fog_aws_computes = {}
 
+      # TODO: Allow a preferred region/az if it's known
       def initialize(options={})
         @@logger = options[:logger]
         if options[:aws_access_key_id] && options[:aws_secret_access_key]
