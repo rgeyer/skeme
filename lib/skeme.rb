@@ -11,7 +11,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-require 'rubygems'
 require 'cloud_providers/aws.rb'
 require 'managers/rightscale.rb'
 

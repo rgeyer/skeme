@@ -11,18 +11,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-require 'right_aws'
+require 'fog'
 
 module Skeme
   module CloudProviders
     class Aws
-      attr_accessor :logger, :ec2
+      @@logger = nil
+      @@fog_aws_compute = nil
 
       def initialize(options={})
-        @logger = options[:logger]
+        @@logger = options[:logger]
         if options[:aws_access_key_id] && options[:aws_secret_access_key]
-          @logger.info("AWS credentials supplied.  EC2 Tagging Enabled.")
-          @ec2 = Rightscale::Ec2.new(options[:aws_access_key_id], options[:aws_secret_access_key], {:logger => options[:logger]})
+          @@logger.info("AWS credentials supplied.  EC2 Tagging Enabled.")
+          @@fog_aws_compute = Fog::Compute.new({:aws_access_key_id => options[:aws_access_key_id], :aws_secret_access_key => options[:aws_secret_access_key], :provider => 'AWS'})
         end
       end
 
@@ -37,7 +38,7 @@ module Skeme
       private
 
       def tag(params={})
-        if @ec2
+        if @@fog_aws_compute
           tag = params[:ec2_tag] || params[:tag]
           setting = params[:action] == "set"
 
@@ -46,11 +47,11 @@ module Skeme
           supplied_id_type.each do |resource_id_key|
             resource_id = params[resource_id_key]
             if setting
-              @logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag})")
-              @ec2.create_tags(resource_id, [tag])
+              @@logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag})")
+              @@fog_aws_compute.create_tags(resource_id, {tag => nil})
             else
-              @logger.info("Removing tag (#{tag}) from AWS resource id (#{resource_id})")
-              @ec2.delete_tags(resource_id, [tag])
+              @@logger.info("Removing tag (#{tag}) from AWS resource id (#{resource_id})")
+              @@fog_aws_compute.delete_tags(resource_id, {tag => nil})
             end
 
           end
