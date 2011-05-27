@@ -17,13 +17,23 @@ module Skeme
   module CloudProviders
     class Aws
       @@logger = nil
-      @@fog_aws_compute = nil
+      @@fog_aws_computes = {}
 
       def initialize(options={})
         @@logger = options[:logger]
         if options[:aws_access_key_id] && options[:aws_secret_access_key]
           @@logger.info("AWS credentials supplied.  EC2 Tagging Enabled.")
-          @@fog_aws_compute = Fog::Compute.new({:aws_access_key_id => options[:aws_access_key_id], :aws_secret_access_key => options[:aws_secret_access_key], :provider => 'AWS'})
+          fog_aws_compute = Fog::Compute.new({:aws_access_key_id => options[:aws_access_key_id], :aws_secret_access_key => options[:aws_secret_access_key], :provider => 'AWS'})
+          fog_aws_compute.describe_regions.body['regionInfo'].each do |region|
+            @@fog_aws_computes.store(region['regionName'],
+              Fog::Compute.new({
+                :aws_access_key_id => options[:aws_access_key_id],
+                :aws_secret_access_key => options[:aws_secret_access_key],
+                :provider => 'AWS',
+                :host => region['regionEndpoint']
+              })
+            )
+          end
         end
       end
 
@@ -38,7 +48,7 @@ module Skeme
       private
 
       def tag(params={})
-        if @@fog_aws_compute
+        if @@fog_aws_computes
           tag = params[:ec2_tag] || params[:tag]
           setting = params[:action] == "set"
 
@@ -47,11 +57,31 @@ module Skeme
           supplied_id_type.each do |resource_id_key|
             resource_id = params[resource_id_key]
             if setting
-              @@logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag})")
-              @@fog_aws_compute.create_tags(resource_id, {tag => nil})
+              not_found_exceptions = []
+              @@fog_aws_computes.each do |key,val|
+                begin
+                  val.create_tags(resource_id, {tag => nil})
+                  @@logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag}) in AWS cloud (#{key})")
+                rescue Fog::Service::NotFound => e
+                  not_found_exceptions << e
+                end
+              end
+              if not_found_exceptions.count == @@fog_aws_computes.count
+                raise not_found_exceptions.first
+              end
             else
               @@logger.info("Removing tag (#{tag}) from AWS resource id (#{resource_id})")
-              @@fog_aws_compute.delete_tags(resource_id, {tag => nil})
+              not_found_exceptions = []
+              @@fog_aws_computes.each do |key,val|
+                begin
+                  val.delete_tags(resource_id, {tag => nil})
+                rescue Fog::Service::NotFound => e
+                  not_found_exceptions << e
+                end
+              end
+              if not_found_exceptions.count == @@fog_aws_computes.count
+                raise not_found_exceptions.first
+              end
             end
 
           end
