@@ -22,12 +22,14 @@ module Skeme
       def initialize(options={})
         @logger = options[:logger]
         if options[:rs_email] && options[:rs_pass] && options[:rs_acct_num]
+          pass = options[:rs_pass].gsub('"', '\\"')
+
           @logger.info("RightScale credentials supplied. RightScale Tagging Enabled.")
           ::RightScale::Api::BaseExtend.class_eval <<-EOF
           @@connection ||= RestConnection::Connection.new
             @@connection.settings = {
               :user => "#{options[:rs_email]}",
-              :pass => "#{options[:rs_pass]}",
+              :pass => "#{pass}",
               :api_url => "https://my.rightscale.com/api/acct/#{options[:rs_acct_num]}",
               :common_headers => {
                 "X_API_VERSION" => "1.0"
@@ -38,7 +40,7 @@ module Skeme
           @@connection ||= RestConnection::Connection.new
             @@connection.settings = {
               :user => "#{options[:rs_email]}",
-              :pass => "#{options[:rs_pass]}",
+              :pass => "#{pass}",
               :api_url => "https://my.rightscale.com/api/acct/#{options[:rs_acct_num]}",
               :common_headers => {
                 "X_API_VERSION" => "1.0"
@@ -83,6 +85,8 @@ module Skeme
           params.keys.each do |resource_id_key|
             resource_href = nil
             case resource_id_key
+              # TODO: Should check for nil on each of these, since what I'm looking for may not be found
+
               # This creates a condition where the instance is tagged twice if both ec2_instance_id and rs_tag_target are both provided.
               # It's still less calls than iterating all of the servers for the aws-id though.
               when :ec2_instance_id, :rs_tag_target
