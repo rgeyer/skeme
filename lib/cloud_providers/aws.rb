@@ -58,16 +58,16 @@ module Skeme
           supplied_id_type.each do |resource_id_key|
             resource_id = params[resource_id_key]
             if setting
+              @@logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag})")
               not_found_exceptions = []
               @@fog_aws_computes.each do |key,val|
                 begin
                   val.create_tags(resource_id, {tag => nil})
-                  @@logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag}) in AWS cloud (#{key})")
                 rescue Fog::Service::NotFound => e
                   not_found_exceptions << e
                 end
               end
-              if not_found_exceptions.count == @@fog_aws_computes.count
+              if @@fog_aws_computes.count > 0 && not_found_exceptions.count == @@fog_aws_computes.count
                 raise not_found_exceptions.first
               end
             else
@@ -80,7 +80,7 @@ module Skeme
                   not_found_exceptions << e
                 end
               end
-              if not_found_exceptions.count == @@fog_aws_computes.count
+              if @@fog_aws_computes.count > 0 && not_found_exceptions.count == @@fog_aws_computes.count
                 raise not_found_exceptions.first
               end
             end
