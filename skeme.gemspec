@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{skeme}
-  s.version = "0.0.5"
+  s.version = "0.0.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan J. Geyer"]
-  s.date = %q{2011-05-27}
+  s.date = %q{2011-06-06}
   s.description = %q{= skeme
 
 Skeme is a library for tagging objects (server instances, storage volumes, etc).  It is intended to allow tagging of the same resource in multiple systems simultaneously.
