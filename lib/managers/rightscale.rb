@@ -19,6 +19,8 @@ module Skeme
     class RightScale
       attr_accessor :logger, :gotime
 
+      @@region_hash = {'us-east-1' => 1, 'eu-west-1' => 2, 'us-west-1' => 3, 'ap-northeast-1' => 4, 'ap-southeast-1' => 5}
+
       def initialize(options={})
         @logger = options[:logger]
         if options[:rs_email] && options[:rs_pass] && options[:rs_acct_num]
@@ -77,6 +79,44 @@ module Skeme
         server
       end
 
+      def volume_from_unique_id(ec2_volume_id, options={:region => nil})
+        @logger.info("Looking for ec2_volume_id #{ec2_volume_id}")
+        vol = nil
+        local_region_hash = @@region_hash
+        local_region_hash = {options[:region] => @@region_hash[options[:region]]} if options[:region]
+
+        @logger.info("region hash is #{local_region_hash}")
+
+        local_region_hash.each do |region_name,region_id|
+          @logger.info("Searching in region #{region_name}")
+          vols_in_region = Ec2EbsVolume.find_by_cloud_id(region_id)
+          vols_matching_id = vols_in_region.select { |v| v.aws_id == ec2_volume_id }
+          if vols_matching_id && vols_matching_id.count > 0
+            vol = vols_matching_id.first
+            break
+          end
+        end
+
+        vol
+      end
+
+      def snapshot_from_unique_id(ec2_snapshot_id, options={:region => nil})
+        snap = nil
+        local_region_hash = @@region_hash
+        local_region_hash = {options[:region] => @@region_hash[options[:region]]} if options[:region]
+
+        local_region_hash.each do |region_name,region_id|
+          snaps_in_region = Ec2EbsSnapshot.find_by_cloud_id(region_id)
+          snaps_matching_id = snaps_in_region.select { |v| v.aws_id == ec2_snapshot_id }
+          if snaps_matching_id && snaps_matching_id.count > 0
+            snap = snaps_matching_id.first
+            break
+          end
+        end
+
+        snap
+      end
+
       def tag(params={})
         if @gotime
           tag = params[:rs_tag] || params[:tag]
@@ -90,11 +130,14 @@ module Skeme
               # This creates a condition where the instance is tagged twice if both ec2_instance_id and rs_tag_target are both provided.
               # It's still less calls than iterating all of the servers for the aws-id though.
               when :ec2_instance_id, :rs_tag_target
-                resource_href = server_from_unique_id(params[:ec2_instance_id], params[:rs_tag_target]).current_instance_href
+                server = server_from_unique_id(params[:ec2_instance_id], params[:rs_tag_target])
+                resource_href = server.current_instance_href if server
               when :ec2_ebs_volume_id
-                resource_href = Ec2EbsVolume.find(:first) { |vol| vol.aws_id == params[:ec2_ebs_volume_id] }.href
+                vol = volume_from_unique_id(params[:ec2_ebs_volume_id])
+                resource_href = vol.href if vol
               when :ec2_ebs_snapshot_id
-                resource_href = Ec2EbsSnapshot.find(:first) { |snap| snap.aws_id == params[:ec2_ebs_snapshot_id] }.href
+                snap = snapshot_from_unique_id(params[:ec2_ebs_snapshot_id])
+                resource_href = snap.href if snap
             end
 
             if resource_href
