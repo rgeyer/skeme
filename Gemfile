@@ -3,7 +3,7 @@ source "http://rubygems.org"
 # Example:
 #   gem "activesupport", ">= 2.3.5"
 
-gem "fog", "~> 0.8.2"
+gem "fog", "~> 0.9.0"
 gem "rest_connection", ">= 0.0.21"
 
 # Add dependencies to develop your gem here.
