@@ -44,3 +44,4 @@ pkg
 .idea
 *.iml
 Gemfile.lock
+spec/creds.yml

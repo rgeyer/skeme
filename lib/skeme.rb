@@ -11,23 +11,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-require 'cloud_providers/aws.rb'
-require 'managers/rightscale.rb'
+require 'cloud_providers/aws'
+require 'managers/rightscale'
+require 'models/tag'
 
 module Skeme
   class Skeme
-    # Cloud providers
-    attr_accessor :cloud_providers
-
-    # Management tools
-    attr_accessor :managers
+    # Cloud providers & management tools
+    attr_accessor :tag_destinations
 
     # Just useful internal bits
     attr_accessor :logger
 
     def initialize(options={})
-      @cloud_providers  = []
-      @managers         = []
+      @tag_destinations = {}
 
       if options[:logger]
         @logger = options[:logger]
@@ -37,29 +34,28 @@ module Skeme
 
       options[:logger] = @logger
 
-      cloud_providers << CloudProviders::Aws.new(options)
-
-      managers << Managers::RightScale.new(options)
+      tag_destinations["aws"]         = CloudProviders::Aws.new(options)
+      tag_destinations["rightscale"]  = Managers::RightScale.new(options)
     end
 
     def set_tag(params={})
-      cloud_providers.each do |provider|
-        provider.set_tag(params)
-      end
+      destinations = params[:destinations] || tag_destinations.keys
 
-      managers.each do |manager|
-        manager.set_tag(params)
+      tag_destinations.select{|key| destinations.include? key }.each do |destination|
+        destination.set_tag(params)
       end
     end
 
     def unset_tag(params={})
-      cloud_providers.each do |provider|
-        provider.unset_tag(params)
-      end
+      destinations = params[:destinations] || tag_destinations.keys
 
-      managers.each do |manager|
-        manager.unset_tag(params)
+      tag_destinations.select{|key| destinations.include? key }.each do |destination|
+        destination.unset_tag(params)
       end
+    end
+
+    def get_tags(params={})
+
     end
   end
 end

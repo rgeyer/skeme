@@ -18,6 +18,7 @@ module Skeme
     class Aws
       @@logger = nil
       @@fog_aws_computes = {}
+      @@taggable_resources = [:ec2_instance_id, :ec2_ebs_volume_id, :ec2_ebs_snapshot_id]
 
       # TODO: Allow a preferred region/az if it's known
       def initialize(options={})
@@ -38,31 +39,71 @@ module Skeme
         end
       end
 
-      def set_tag(params={})
-        tag(params.merge({:action => "set"}))
+      def set_tag(tag)
+        tag(tag, true)
       end
 
-      def unset_tag(params={})
-        tag(params.merge({:action => "unset"}))
+      def unset_tag(tag)
+        tag(tag, false)
+      end
+
+      def unset_tags(tags=[])
+
+      end
+
+      def set_tags(tags=[])
+
+      end
+
+      def get_tags(resource_id)
+        if @@fog_aws_computes
+          not_found_exceptions = []
+          retval = nil
+          @@fog_aws_computes.each do |key,val|
+            begin
+              retval = val.describe_tags('resource-id' => resource_id)
+              break if retval && retval.body["tagSet"].count != 0
+            rescue Fog::Service::NotFound => e
+              not_found_exceptions << e
+            end
+          end
+          if @@fog_aws_computes.count > 0 && not_found_exceptions.count == @@fog_aws_computes.count
+            raise not_found_exceptions.first
+          end
+          retval ? retval.body["tagSet"] : []
+        end
       end
 
       private
 
-      def tag(params={})
-        if @@fog_aws_computes
-          tag = params[:ec2_tag] || params[:tag]
-          setting = params[:action] == "set"
+      def validate_resource_type(resource_ids={})
+        raise ArgumentError, "No known resource type provided, try one of the following.. #{@@taggable_resources}" unless (@@taggable_resources & resource_ids.keys).count > 0
+      end
 
+      def taggable_resource_id(resource_ids={})
+        retval = []
+        if @@fog_aws_computes
           taggable_resources = [:ec2_instance_id, :ec2_ebs_volume_id, :ec2_ebs_snapshot_id]
-          supplied_id_type = taggable_resources & params.keys
+          supplied_id_type = taggable_resources & resource_ids.keys
           supplied_id_type.each do |resource_id_key|
-            resource_id = params[resource_id_key]
+            retval << resource_ids[resource_id_key]
+          end
+          retval
+        end
+      end
+
+      def tag(tag, setting)
+        validate_resource_type tag.resource_ids
+        if @@fog_aws_computes
+          tagkey = "#{tag.namespace}:#{tag.predicate}"
+
+          taggable_resource_id(tag.resource_ids).each do |resource_id|
             if setting
-              @@logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag})")
+              @@logger.info("Tagging AWS resource id (#{resource_id}) with (#{tag.machine_tag})")
               not_found_exceptions = []
               @@fog_aws_computes.each do |key,val|
                 begin
-                  val.create_tags(resource_id, {tag => nil})
+                  val.create_tags(resource_id, {tagkey => tag.value})
                 rescue Fog::Service::NotFound => e
                   not_found_exceptions << e
                 end
@@ -71,11 +112,11 @@ module Skeme
                 raise not_found_exceptions.first
               end
             else
-              @@logger.info("Removing tag (#{tag}) from AWS resource id (#{resource_id})")
+              @@logger.info("Removing tag (#{tagkey}=#{tag.value}) from AWS resource id (#{resource_id})")
               not_found_exceptions = []
               @@fog_aws_computes.each do |key,val|
                 begin
-                  val.delete_tags(resource_id, {tag => nil})
+                  val.delete_tags(resource_id, {tagkey => tag.value})
                 rescue Fog::Service::NotFound => e
                   not_found_exceptions << e
                 end

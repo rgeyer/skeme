@@ -1,0 +1,6 @@
+--- 
+:aws_access_key_id: foo
+:aws_secret_access_key: bar
+:rs_email: foo@bar.baz
+:rs_pass: bar
+:rs_acct_num: 12345
