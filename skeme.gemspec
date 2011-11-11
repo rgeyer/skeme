@@ -49,8 +49,14 @@ further details.
     "VERSION",
     "lib/cloud_providers/aws.rb",
     "lib/managers/rightscale.rb",
+    "lib/models/tag.rb",
     "lib/skeme.rb",
     "skeme.gemspec",
+    "spec/cloud_providers/aws.rb",
+    "spec/creds.sample.yml",
+    "spec/models/tag.rb",
+    "spec/spec.opts",
+    "spec/spec_helper.rb",
     "test/helper.rb",
     "test/test_skeme.rb"
   ]
@@ -60,6 +66,9 @@ further details.
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{A cloud management tagging library}
   s.test_files = [
+    "spec/cloud_providers/aws.rb",
+    "spec/models/tag.rb",
+    "spec/spec_helper.rb",
     "test/helper.rb",
     "test/test_skeme.rb"
   ]
@@ -69,26 +78,29 @@ further details.
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<fog>, ["~> 0.9.0"])
-      s.add_runtime_dependency(%q<rest_connection>, ["= 0.0.23"])
+      s.add_runtime_dependency(%q<rest_connection>, [">= 0.0.21"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
+      s.add_development_dependency(%q<rspec>, ["~> 2.6.0"])
     else
       s.add_dependency(%q<fog>, ["~> 0.9.0"])
-      s.add_dependency(%q<rest_connection>, ["= 0.0.23"])
+      s.add_dependency(%q<rest_connection>, [">= 0.0.21"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_dependency(%q<rcov>, [">= 0"])
+      s.add_dependency(%q<rspec>, ["~> 2.6.0"])
     end
   else
     s.add_dependency(%q<fog>, ["~> 0.9.0"])
-    s.add_dependency(%q<rest_connection>, ["= 0.0.23"])
+    s.add_dependency(%q<rest_connection>, [">= 0.0.21"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
     s.add_dependency(%q<rcov>, [">= 0"])
+    s.add_dependency(%q<rspec>, ["~> 2.6.0"])
   end
 end
 
