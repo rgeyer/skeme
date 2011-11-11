@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan J. Geyer"]
-  s.date = %q{2011-07-07}
+  s.date = %q{2011-11-11}
   s.description = %q{= skeme
 
 Skeme is a library for tagging objects (server instances, storage volumes, etc).  It is intended to allow tagging of the same resource in multiple systems simultaneously.
@@ -69,14 +69,14 @@ further details.
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<fog>, ["~> 0.9.0"])
-      s.add_runtime_dependency(%q<rest_connection>, [">= 0.0.21"])
+      s.add_runtime_dependency(%q<rest_connection>, ["= 0.0.23"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
     else
       s.add_dependency(%q<fog>, ["~> 0.9.0"])
-      s.add_dependency(%q<rest_connection>, [">= 0.0.21"])
+      s.add_dependency(%q<rest_connection>, ["= 0.0.23"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
@@ -84,7 +84,7 @@ further details.
     end
   else
     s.add_dependency(%q<fog>, ["~> 0.9.0"])
-    s.add_dependency(%q<rest_connection>, [">= 0.0.21"])
+    s.add_dependency(%q<rest_connection>, ["= 0.0.23"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
